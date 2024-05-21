@@ -1,4 +1,4 @@
-<table class="table table-hover">
+<table class="table table-hover ">
     <thead>
       
       <tr>
@@ -11,6 +11,7 @@
         <!-- Input fields for filtering -->
         <th *ngFor="let col of columns">
           <input *ngIf="col.filter" class="form-control" name="{{col.header}}" placeholder="Filter {{ col.header }}" [(ngModel)]="values[col.header]" type="text" (input) = "filter(col.header)"/>
+          <app-checkbox-filter (filterChanged)="checkboxFilter($event)"  *ngIf="col.type === 'checkbox'"></app-checkbox-filter>
           <!--app-three-state-checkbox *ngIf="col.type === 'checkbox'"></app-three-state-checkbox-->
         </th>
       </tr>
@@ -20,8 +21,8 @@
       <tr *ngFor="let row of visibleData ">
         <td *ngFor="let col of visibleColumns">
           <ng-container [ngSwitch]="col.type">
-            <span *ngSwitchCase="'text'">{{ row[col.field] }}</span>
-            <input *ngSwitchCase="'checkbox'" type="checkbox" [checked]="row[col.field]" />
+            <span *ngSwitchCase="'text'">{{ row[col.header] }}</span>
+            <input *ngSwitchCase="'checkbox'" type="checkbox" [checked]="row[col.header]" />
           </ng-container>
         </td>
       </tr>

@@ -16,11 +16,11 @@ export class DashboardComponent implements OnInit{
 constructor(private projectService: ProjectService){}
 
   columns = [
-    {field: "Project", header:"Project", type: "text", filter: false},
-    {field: "ProjectVersion", header:"ProjectVersion", type: "text", filter: false},
-    {field: "Instance", header:"Instance", type: "text", filter: false},
-    {field: "Status", header: "Status", type:"text", filter: false},
-    {field: "Timestamp", header: "Timestamp", type:"text", filter: false}
+    {header:"Project", type: "text", filter: false},
+    {header:"ProjectVersion", type: "text", filter: false},
+    {header:"Instance", type: "text", filter: false},
+    {header: "Status", type:"text", filter: false},
+    {header: "Timestamp", type:"text", filter: false}
   ];
   data = [
     {Project: "WebDMS", ProjectVersion:"1.27.1", Instance: "System testowy vsrvweb1:83", Status: "Pending"},
