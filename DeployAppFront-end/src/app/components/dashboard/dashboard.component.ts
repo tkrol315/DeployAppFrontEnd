@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataGridViewComponent } from '../data-grid-view/data-grid-view.component';
 import { RouterModule } from '@angular/router';
-import { ProjectService } from '../Services/project.service';
+import { ProjectService } from '../../Services/project.service';
 import { HttpClientModule } from '@angular/common/http';
 
 @Component({
@@ -34,7 +34,7 @@ constructor(private projectService: ProjectService){}
         // this.data = response.map((item : any) =>{
         //   Project: 
         // })
-        console.log(response);
+        //console.log(response);
     });
   }
   //================

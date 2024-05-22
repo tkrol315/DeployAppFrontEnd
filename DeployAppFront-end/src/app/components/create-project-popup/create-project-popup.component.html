@@ -1,0 +1,33 @@
+<div class="container form-wrapper">
+    <h2 class="mb-4 mt-2">New Project</h2>
+    <form [formGroup]="projectForm" >
+      <div class="mb-3 form-group">
+        <label for="title" class="mb-1">Title
+        </label>
+        <input type="text" id="title" formControlName="title" class="form-control">
+      </div>
+      <div class="mb-3 form-group">
+        <label for="description" class="mb-1">Description</label>
+        <input type="text" id="description" formControlName="description" class="form-control">
+      </div>
+      <div class="mb-3 form-group">
+        <label for="isActive" class="mb-1">Is Active?</label>
+        <select id="isActive" class="form-select" formControlName="isActive">
+          <option value=true>Yes</option>
+          <option value=false>No</option>
+        </select>
+      </div>
+      <div class="mb-3 form-group">
+        <label for="ytCode" class="mb-1">Yt code</label>
+        <input type="text" id="ytCode" formControlName="ytCode" class="form-control">
+      </div>
+      <div class="mb-3 form-group">
+        <label for="repositoryUrl" class="mb-1">repository URL</label>
+        <input type="text" id="repositoryUrl" formControlName="repositoryUrl" class="form-control">
+      </div>
+      <div class="d-flex justify-content-end mb-2">
+        <button type="button" class="btn btn-secondary me-2" (click)="closePopup()">Close</button>
+        <button [disabled]="!projectForm.valid"  type="submit" class="btn btn-primary" (click)="addProject()">Add</button>
+      </div>
+    </form>
+  </div>
