@@ -17,13 +17,13 @@ import { ProjectDto } from '../../dto/project.dto';
 export class CreateProjectPopupComponent {
   
   projectForm : FormGroup;
-  @Input() projects: ProjectDto[] = [];
+  @Output() projectAdded = new EventEmitter<ProjectDto>();
 
   constructor(private activeModal : NgbActiveModal, private formBuilder : FormBuilder, private projectService: ProjectService){
     this.projectForm = this.formBuilder.group({
       title : new FormControl('', [Validators.required, Validators.maxLength(100)]),
       description: new FormControl('', [Validators.required, Validators.maxLength(250)]),
-      isActive: new FormControl('',[Validators.required]),
+      isActive: new FormControl(false,[Validators.required]),
       ytCode: new FormControl('',[Validators.required, Validators.maxLength(10)]),
       repositoryUrl: new FormControl('', [Validators.required, Validators.maxLength(250)])
     });;
@@ -35,8 +35,11 @@ export class CreateProjectPopupComponent {
  
   addProject() : void{
     if(this.projectForm.valid){
-      const newProject: ProjectDto = this.projectForm.value;
-      this.projectService.createNewProject(newProject).subscribe(project => this.projects.push(project));
+      const projectDto: ProjectDto = this.projectForm.value;
+       this.projectService.createNewProject(projectDto).subscribe(project => {
+        this.projectAdded.emit(project); 
+        this.activeModal.close();
+      });
     }
   }
 }

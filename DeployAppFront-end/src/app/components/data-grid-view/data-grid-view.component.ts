@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CheckboxFilterComponent } from '../checkbox-filter/checkbox-filter.component';
+import { DataService } from '../../Services/dataservice';
 
 @Component({
   selector: 'app-data-grid-view',
@@ -10,60 +11,64 @@ import { CheckboxFilterComponent } from '../checkbox-filter/checkbox-filter.comp
   templateUrl: './data-grid-view.component.html',
   styleUrl: './data-grid-view.component.scss'
 })
-export class DataGridViewComponent implements OnChanges {
-  ngOnChanges(changes: SimpleChanges): void {
-    this.visibleData = this.data;
-  }
+export class DataGridViewComponent<T>  {
 
   @Input() data : any[] = [];
   @Input() columns: {header: string, type: string, filter: boolean}[] = [];
   values : {[key: string]:string} = {};
   filters: {[key: string]:string} = {};
+  @Input() dataUrl : string = '';
+  checkboxFilters : {[key : string]: string} = {}; 
+  @Input() service! : DataService;
 
-  visibleData : any[] = [];
-  visibleColumns : {header: string, type: string, filter: boolean}[] = [];
+  getFilterValues(): { [key: string]: string } {
+    const filterValues: { [key: string]: string } = {};
 
-  ngOnInit(): void{
-    this.visibleData = this.data.slice();
-    this.visibleColumns = this.columns.slice();
-  }
-
-  filter(colHeader : string) : void{
-    console.clear();
-    const column = this.columns.find(col => col.header === colHeader);
-    if (!column)
-      return; 
-    const ch = column.header;  
-    this.data.forEach(row => {
-      if (row[ch] !== undefined) {
-        this.visibleData = this.data.filter(row => 
-          this.columns.every(column => {
-            const filterValue = this.values[column.header];
-            return !filterValue || row[column.header].toString().toLowerCase().includes(filterValue.toLowerCase());
-          })
-        );
+    this.columns.forEach(col => {
+      if (col.filter) {
+        if(col.type === 'text'){
+          filterValues[col.header] = this.values[col.header] === undefined ? '' : this.values[col.header];
+        }
       }
     });
+    return filterValues;
+  }
+
+  filter() : void{   
+    const textFilters = this.getFilterValues();
+    const mergedFilters = this.createMergedFilters(textFilters, this.checkboxFilters);
+    console.log(mergedFilters);
+    this.service.getDataWithFilters(mergedFilters).subscribe((resp : any) =>{
+      this.data = resp;
+    });
+
   } 
 
-  //It should be refactored so it will work with above filter for now its ok
-  checkboxFilter(state : any){
-    this.visibleData = [];
-    if(state === "nofilter"){
-      this.visibleData = this.data.slice();
-      return;
-    }
-    this.data.forEach(row => {
-      this.columns.forEach(col =>{
-        if(col.type === "checkbox"){
-            if(state === "activeElements" && row[col.header]){
-              this.visibleData.push(row);
-            }
-            else if(state === "noActiveElements" && !row[col.header]){
-              this.visibleData.push(row);
-            }
+  createMergedFilters(filterValues: { [key: string]: string }, checkboxFilters: { [key: string]: string }): { [key: string]: any } {
+    const mergedFilters: { [key: string]: any } = { ...filterValues };
+
+    for (const key in checkboxFilters) {
+      if (checkboxFilters.hasOwnProperty(key)) {
+        switch (checkboxFilters[key]) {
+          case 'activeElements':
+            mergedFilters[key] = true;
+            break;
+          case 'noActiveElements':
+            mergedFilters[key] = false;
+            break;
+          case 'nofilter':
+          default:
+            mergedFilters[key] = null;
+            break;
         }
-      })
-    })
+      }
+    }
+    return mergedFilters;
+  }
+
+  //It should be refactored so it will work with above filter for now its ok
+  checkboxFilterChanged(colHeader:string, state : any) : void{
+    this.checkboxFilters[colHeader] = state;
+    this.filter();
   }
 }

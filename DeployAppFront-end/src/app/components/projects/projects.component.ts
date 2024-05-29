@@ -4,8 +4,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { ProjectService } from '../../Services/project.service';
 import { CreateProjectPopupComponent } from '../create-project-popup/create-project-popup.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ProjectDto } from '../../dto/project.dto';
 import { ProjectRowDto } from '../../dto/project.row.dto';
+import { ActivatedRoute } from '@angular/router';
+import { filter } from 'rxjs';
 @Component({
   selector: 'app-projects',
   standalone: true,
@@ -16,37 +17,57 @@ import { ProjectRowDto } from '../../dto/project.row.dto';
 })
 export class ProjectsComponent implements OnInit {
   data : ProjectRowDto[]= [];
-  projects: ProjectDto[] = [];
-  constructor(private projectService: ProjectService,private modalService: NgbModal ){}
+  constructor(
+    private route: ActivatedRoute,
+    protected projectService: ProjectService,
+    private modalService: NgbModal 
+  ){}
 
   ngOnInit(): void {
-    this.projectService.getAllProjects().subscribe((response: any) => {
-      this.data = response.map((item: any) => ({
-        Title: item.title,
-        Description: item.description,
-        Active: item.isActive, 
-        Actions: "Edit/Del"
-      }));
-      this.projects = response.map((item: any) => ({
-        Title: item.title,
-        Description: item.description,
-        IsActive: item.isActive,
-        YtCode: item.ytCode,
-        RepositoryUrl: item.repositoryUrl
-      }));
+    this.route.queryParams.subscribe(params => {
+      const filters = {
+        Title: params['Title'] || '',
+        Description: params['Description'] || '',
+        IsActive: params['IsActive'] || false
+      };
+  
+      this.loadProjects(filters);
     });
+   
   }
+
   
   columns = [
     {header:"Title", type: "text", filter: true},
     {header:"Description", type: "text", filter: true},
-    {header:"Active", type: "checkbox", filter: false},
+    {header:"IsActive", type: "checkbox", filter: false},
     {header: "Actions", type:"text", filter: false},
   ];
   
   openPopup(){
     const modalRef = this.modalService.open(CreateProjectPopupComponent);
-    modalRef.componentInstance.projects = this.projects;
+    modalRef.componentInstance.projectAdded.subscribe(() => {
+      this.route.queryParams.subscribe(params => {
+        const filters = {
+          Title: params['Title'] || '',
+          Description: params['Description'] || '',
+          IsActive: params['IsActive'] || null
+        };
+        this.loadProjects(filters);
+      });
+    });
 
+  }
+
+  loadProjects(filters: { [key: string]: any }): void{
+    this.projectService.getDataWithFilters(filters).subscribe((response: any) => {
+      this.data = response.map((item: any) => ({
+        Title: item.title,
+        Description: item.description,
+        IsActive: item.isActive, 
+        Actions: "Edit/Del"
+      }));
+      console.log(this.data);
+    });
   }
 }

@@ -12,8 +12,9 @@ import { HttpClientModule } from '@angular/common/http';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent implements OnInit{
+export class DashboardComponent {
 constructor(private projectService: ProjectService){}
+ 
 
   columns = [
     {header:"Project", type: "text", filter: false},
@@ -28,14 +29,5 @@ constructor(private projectService: ProjectService){}
     {Project: "WebDMS", ProjectVersion:"1.27.1", Instance: "System testowy vsrvweb1:94", Status: "Completed", Timestamp:"2024.05.08 12:45:11"},
   ]
 
-  //Not implemented 
-  ngOnInit(): void {
-    this.projectService.getDashboardInfo().subscribe((response: any) => {
-        // this.data = response.map((item : any) =>{
-        //   Project: 
-        // })
-        //console.log(response);
-    });
-  }
-  //================
+
 }

@@ -13,8 +13,8 @@
       <div class="mb-3 form-group">
         <label for="isActive" class="mb-1">Is Active?</label>
         <select id="isActive" class="form-select" formControlName="isActive">
-          <option value=true>Yes</option>
-          <option value=false>No</option>
+          <option [ngValue]="true">Yes</option>
+          <option [ngValue]="false">No</option>
         </select>
       </div>
       <div class="mb-3 form-group">

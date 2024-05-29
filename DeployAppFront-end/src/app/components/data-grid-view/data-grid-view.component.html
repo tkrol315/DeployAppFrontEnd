@@ -10,16 +10,16 @@
       <tr>
         <!-- Input fields for filtering -->
         <th *ngFor="let col of columns">
-          <input *ngIf="col.filter" class="form-control" name="{{col.header}}" placeholder="Filter {{ col.header }}" [(ngModel)]="values[col.header]" type="text" (input) = "filter(col.header)"/>
-          <app-checkbox-filter (filterChanged)="checkboxFilter($event)"  *ngIf="col.type === 'checkbox'"></app-checkbox-filter>
+          <input *ngIf="col.filter" class="form-control" name="{{col.header}}" placeholder="Filter {{ col.header }}" [(ngModel)]="values[col.header]" type="text" (input) = "filter()"/>
+          <app-checkbox-filter (filterChanged)="checkboxFilterChanged(col.header,$event)" *ngIf="col.type === 'checkbox'"></app-checkbox-filter>
           <!--app-three-state-checkbox *ngIf="col.type === 'checkbox'"></app-three-state-checkbox-->
         </th>
       </tr>
     </thead>
     <tbody>
       <!-- Filtered data rows -->
-      <tr *ngFor="let row of visibleData ">
-        <td *ngFor="let col of visibleColumns">
+      <tr *ngFor="let row of data ">
+        <td *ngFor="let col of columns">
           <ng-container [ngSwitch]="col.type">
             <span *ngSwitchCase="'text'">{{ row[col.header] }}</span>
             <input *ngSwitchCase="'checkbox'" type="checkbox" [checked]="row[col.header]" />

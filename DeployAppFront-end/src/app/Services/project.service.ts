@@ -1,42 +1,44 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { ProjectDto } from '../dto/project.dto';
-import { Observable, catchError } from 'rxjs';
+import { Observable, filter, map } from 'rxjs';
+import { DataService } from './dataservice';
+import { ProjectRowDto } from '../dto/project.row.dto';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProjectService {
+export class ProjectService implements DataService   {
   private url : string = "https://localhost:7183/deployapp/projects"
   constructor(private http : HttpClient) {}
   
-  getAllProjects() : Observable<ProjectDto[]>{
-    return this.http.get<ProjectDto[]>(this.url);
-  }
+  getDataWithFilters(filters: { [key: string]: any; }): Observable<any[]> {
 
-  //not work, maby api problem (from swagger works)
+    // let params = new HttpParams();
+    // Object.keys(filters).forEach(key => {
+    //   const value = filters[key];
+    //   if (value !== null && value !== undefined) {
+    //     params = params.append(key, value);
+    //   }
+    // });
+
+    return this.http.get<[]>(this.url);
+  }
+  
+  // getAllProjects() : Observable<ProjectDto[]>{
+    
+  // }
+
   createNewProject(dto : ProjectDto) : Observable<ProjectDto>{
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        'key':'value',
       }
       )
     }
-   return this.http.post<ProjectDto>(this.url,dto, httpOptions);
+   return this.http.post<ProjectDto>(this.url,dto, httpOptions)
   }
-  //==================================================
 
-  //not implemented
-  getDashboardInfo(){
-    const projects =  this.http.get('https://localhost:7183/deployapp/projects');
-    // projects.forEach(proj => {
-    //     const deploys = this.http.get('https://localhost:7183/deployapp/projects/${proj.Id}/deploys')
-    //     const versinos = deploys.forEach(d => this.http.get('https://localhost:7183/deployapp/projects/${proj.Id}/deploys'))
-    // });
-    return this.http.get('https://localhost:7183/deployapp/projects');
-  }
-  //================
   
 }
