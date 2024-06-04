@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CheckboxFilterComponent } from '../checkbox-filter/checkbox-filter.component';
 import { DataService } from '../../Services/dataservice';
@@ -11,19 +11,19 @@ import { DataService } from '../../Services/dataservice';
   templateUrl: './data-grid-view.component.html',
   styleUrl: './data-grid-view.component.scss'
 })
-export class DataGridViewComponent<T>  {
+export class DataGridViewComponent    {
 
   @Input() data : any[] = [];
-  @Input() columns: {header: string, type: string, filter: boolean}[] = [];
+  @Input() columns: {header: string, type: string, filter: boolean, visible : boolean}[] = [];
+  @Input() dataUrl : string = '';
+  @Input() service! : DataService;
   values : {[key: string]:string} = {};
   filters: {[key: string]:string} = {};
-  @Input() dataUrl : string = '';
   checkboxFilters : {[key : string]: string} = {}; 
-  @Input() service! : DataService;
+  apiCallEnable : boolean = true;
 
   getFilterValues(): { [key: string]: string } {
     const filterValues: { [key: string]: string } = {};
-
     this.columns.forEach(col => {
       if (col.filter) {
         if(col.type === 'text'){
@@ -31,17 +31,21 @@ export class DataGridViewComponent<T>  {
         }
       }
     });
+    
     return filterValues;
   }
 
-  filter() : void{   
+  filter() : void{
+    if(!this.apiCallEnable)
+      return;
+    this.apiCallEnable = false;
+    this.data = [];
     const textFilters = this.getFilterValues();
     const mergedFilters = this.createMergedFilters(textFilters, this.checkboxFilters);
-    console.log(mergedFilters);
-    this.service.getDataWithFilters(mergedFilters).subscribe((resp : any) =>{
-      this.data = resp;
+    this.service.getDataWithFilters(mergedFilters).subscribe((response : any) =>{
+      this.data = this.service.mapDataToRows(response);
     });
-
+    setTimeout(()=>{this.apiCallEnable = true; },200)
   } 
 
   createMergedFilters(filterValues: { [key: string]: string }, checkboxFilters: { [key: string]: string }): { [key: string]: any } {
@@ -66,7 +70,14 @@ export class DataGridViewComponent<T>  {
     return mergedFilters;
   }
 
-  //It should be refactored so it will work with above filter for now its ok
+  removeElement(e : Event, id : number) : void{
+    e.preventDefault();
+    const confirmed = window.confirm("Are you sure you want to delete this item?");
+    if (confirmed) {
+      this.service.removeClickedItem(id).subscribe(() => this.filter());
+    } 
+   }
+
   checkboxFilterChanged(colHeader:string, state : any) : void{
     this.checkboxFilters[colHeader] = state;
     this.filter();

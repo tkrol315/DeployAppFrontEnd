@@ -6,7 +6,6 @@ import { CreateProjectPopupComponent } from '../create-project-popup/create-proj
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProjectRowDto } from '../../dto/project.row.dto';
 import { ActivatedRoute } from '@angular/router';
-import { filter } from 'rxjs';
 @Component({
   selector: 'app-projects',
   standalone: true,
@@ -28,7 +27,7 @@ export class ProjectsComponent implements OnInit {
       const filters = {
         Title: params['Title'] || '',
         Description: params['Description'] || '',
-        IsActive: params['IsActive'] || false
+        IsActive: params['IsActive'] || null
       };
   
       this.loadProjects(filters);
@@ -38,10 +37,10 @@ export class ProjectsComponent implements OnInit {
 
   
   columns = [
-    {header:"Title", type: "text", filter: true},
-    {header:"Description", type: "text", filter: true},
-    {header:"IsActive", type: "checkbox", filter: false},
-    {header: "Actions", type:"text", filter: false},
+    {header:"Id", type: "text", filter: false, visible: false},
+    {header:"Title", type: "text", filter: true, visible: true},
+    {header:"Description", type: "text", filter: true, visible: true},
+    {header:"IsActive", type: "checkbox", filter: false, visible: true},
   ];
   
   openPopup(){
@@ -62,12 +61,11 @@ export class ProjectsComponent implements OnInit {
   loadProjects(filters: { [key: string]: any }): void{
     this.projectService.getDataWithFilters(filters).subscribe((response: any) => {
       this.data = response.map((item: any) => ({
+        Id: item.id,
         Title: item.title,
         Description: item.description,
         IsActive: item.isActive, 
-        Actions: "Edit/Del"
       }));
-      console.log(this.data);
     });
   }
 }

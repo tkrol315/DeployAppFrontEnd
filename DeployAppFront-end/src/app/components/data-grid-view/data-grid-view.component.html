@@ -4,8 +4,11 @@
       <tr>
         <!-- Headers -->
         <th *ngFor="let col of columns">
+          <ng-container *ngIf="col.visible === true">
           {{ col.header }}
+        </ng-container>
         </th>
+        <th>Actions</th>
       </tr>
       <tr>
         <!-- Input fields for filtering -->
@@ -20,11 +23,15 @@
       <!-- Filtered data rows -->
       <tr *ngFor="let row of data ">
         <td *ngFor="let col of columns">
-          <ng-container [ngSwitch]="col.type">
+          <ng-container *ngIf="col.visible === true" [ngSwitch]="col.type">
             <span *ngSwitchCase="'text'">{{ row[col.header] }}</span>
-            <input *ngSwitchCase="'checkbox'" type="checkbox" [checked]="row[col.header]" />
+            <input *ngSwitchCase="'checkbox'" type="checkbox" [checked]="row[col.header]" class="checkbox-readonly"/>
           </ng-container>
         </td>
+        <td>
+          <a href="#" >Edit</a> /
+          <a href="#" (click) = "removeElement($event, row['Id'])">Del</a>
+        </td> 
       </tr>
     </tbody>
   </table>

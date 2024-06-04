@@ -17,11 +17,11 @@ constructor(private projectService: ProjectService){}
  
 
   columns = [
-    {header:"Project", type: "text", filter: false},
-    {header:"ProjectVersion", type: "text", filter: false},
-    {header:"Instance", type: "text", filter: false},
-    {header: "Status", type:"text", filter: false},
-    {header: "Timestamp", type:"text", filter: false}
+    {header:"Project", type: "text", filter: false, visible: true},
+    {header:"ProjectVersion", type: "text", filter: false, visible: true},
+    {header:"Instance", type: "text", filter: false, visible: true},
+    {header: "Status", type:"text", filter: false, visible: true},
+    {header: "Timestamp", type:"text", filter: false, visible: true}
   ];
   data = [
     {Project: "WebDMS", ProjectVersion:"1.27.1", Instance: "System testowy vsrvweb1:83", Status: "Pending"},
