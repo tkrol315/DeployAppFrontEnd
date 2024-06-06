@@ -24,12 +24,12 @@
       <tr *ngFor="let row of data ">
         <td *ngFor="let col of columns">
           <ng-container *ngIf="col.visible === true" [ngSwitch]="col.type">
-            <span *ngSwitchCase="'text'">{{ row[col.header] }}</span>
-            <input *ngSwitchCase="'checkbox'" type="checkbox" [checked]="row[col.header]" class="checkbox-readonly"/>
+            <span *ngSwitchCase="'text'">{{ row[col.columnName] }}</span>
+            <input *ngSwitchCase="'checkbox'" type="checkbox" [checked]="row[col.columnName]" class="checkbox-readonly"/>
           </ng-container>
         </td>
         <td>
-          <a href="#" >Edit</a> /
+          <a href="#" (click)= "goToDetails($event, row['Id'])" >Edit</a> /
           <a href="#" (click) = "removeElement($event, row['Id'])">Del</a>
         </td> 
       </tr>

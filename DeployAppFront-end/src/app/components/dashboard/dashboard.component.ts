@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataGridViewComponent } from '../data-grid-view/data-grid-view.component';
 import { RouterModule } from '@angular/router';
-import { ProjectService } from '../../Services/project.service';
+import { ProjectService } from '../../Services/projectService/project.service';
 import { HttpClientModule } from '@angular/common/http';
 
 @Component({
@@ -17,11 +17,11 @@ constructor(private projectService: ProjectService){}
  
 
   columns = [
-    {header:"Project", type: "text", filter: false, visible: true},
-    {header:"ProjectVersion", type: "text", filter: false, visible: true},
-    {header:"Instance", type: "text", filter: false, visible: true},
-    {header: "Status", type:"text", filter: false, visible: true},
-    {header: "Timestamp", type:"text", filter: false, visible: true}
+    {columnName: "Project", header:"Project", type: "text", filter: false, visible: true},
+    {columnName:"ProjectVersion", header:"ProjectVersion", type: "text", filter: false, visible: true},
+    {columnName:"Instance", header:"Instance", type: "text", filter: false, visible: true},
+    {columnName:"Status", header: "Status", type:"text", filter: false, visible: true},
+    {columnName:"Timestamp", header: "Timestamp", type:"text", filter: false, visible: true}
   ];
   data = [
     {Project: "WebDMS", ProjectVersion:"1.27.1", Instance: "System testowy vsrvweb1:83", Status: "Pending"},

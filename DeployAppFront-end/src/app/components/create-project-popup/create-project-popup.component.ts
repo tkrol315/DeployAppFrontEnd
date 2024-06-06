@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ProjectService } from '../../Services/project.service';
+import { ProjectService } from '../../Services/projectService/project.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ProjectDto } from '../../dto/project.dto';
 

@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { ProjectDto } from '../dto/project.dto';
-import { Observable, filter, map, of } from 'rxjs';
-import { DataService } from './dataservice';
-import { ProjectRowDto } from '../dto/project.row.dto';
-import { InstanceRowDto } from '../dto/instance.dto';
+import { ProjectDto } from '../../dto/project.dto';
+import { Observable } from 'rxjs';
+import { ProjectRowDto } from '../../dto/project.row.dto';
+import { DataGridViewDataService } from '../abstractions/data-grid-view-data.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProjectService implements DataService   {
+export class ProjectService implements DataGridViewDataService   {
   private url : string = "https://localhost:7183/deployapp/projects"
   constructor(private http : HttpClient) {}
 
@@ -32,11 +31,14 @@ export class ProjectService implements DataService   {
         params = params.append(key, value);
       }
     });
-    return this.http.get<[]>(this.url, {params});
+    return this.http.get<any[]>(this.url, {params});
+  }
+
+  getProjectById(id : number) : Observable<any>{
+    return this.http.get(`${this.url}/${id}`);
   }
   
   removeClickedItem(id :number) : Observable<any>{
-    console.log("usunalem element o id: " + id);
     return this.http.delete(`${this.url}/${id}`);
   }
 
