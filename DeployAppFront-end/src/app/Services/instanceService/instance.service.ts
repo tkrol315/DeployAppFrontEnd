@@ -9,16 +9,25 @@ import { Observable } from 'rxjs';
 export class InstanceService implements DataGridViewDataService {
 
   private url : string = "https://localhost:7183/deployapp/projects"
+  projectId! : number;
   constructor(private http : HttpClient) { }
+
+  setProjectId(id : number) : void{
+    this.projectId = id;
+  }
   
-  getDataWithFilters(filters: { [key: string]: any}, secondPathPart? : string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.url}/${secondPathPart}`);
+  getDataWithFilters(filters: { [key: string]: any}): Observable<any[]> {
+    return this.http.get<any[]>(`${this.url}/${this.projectId}/instances`);
   }
   mapDataToRows(response: any): any[] {
-    throw new Error('Method not implemented.');
+    return response.map((item: any) => ({
+      Id: item.id,
+      Name: item.name,
+      Type: item.typeDescription,
+      CurrentVersion: item.projectVersion === null ? "No version" : item.projectVersion.versionString
+    }));
   }
-  removeClickedItem(id: number): Observable<any> {
-    throw new Error('Method not implemented.');
+  removeClickedItem(instanceId: number): Observable<any> {
+    return this.http.delete(`${this.url}/${this.projectId}/instances/${instanceId}`);
   }
-
 }

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import { Component, Input, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CheckboxFilterComponent } from '../checkbox-filter/checkbox-filter.component';
+import { CheckboxFilterComponent } from './checkbox-filter/checkbox-filter.component';
 import { Router } from '@angular/router';
 import { DataGridViewDataService } from '../../Services/abstractions/data-grid-view-data.service';
 
@@ -12,65 +12,60 @@ import { DataGridViewDataService } from '../../Services/abstractions/data-grid-v
   templateUrl: './data-grid-view.component.html',
   styleUrl: './data-grid-view.component.scss'
 })
-export class DataGridViewComponent    {
+export class DataGridViewComponent implements OnInit   {
 
   @Input() data : any[] = [];
-  @Input() columns: {columnName:string, header: string, type: string, filter: boolean, visible : boolean}[] = [];
+  @Input() columns: {name:string, header: string, type: string, filter: boolean, visible : boolean}[] = [];
   @Input() dataUrl : string = '';
   @Input() service! : DataGridViewDataService;
-  values : {[key: string]:string} = {};
-  filters: {[key: string]:string} = {};
-  checkboxFilters : {[key : string]: string} = {}; 
-  apiCallEnable : boolean = true;
+  filters : {[key : string] : any} = {};
 
   constructor(private router : Router) {  }
 
-  getFilterValues(): { [key: string]: string } {
-    const filterValues: { [key: string]: string } = {};
+  ngOnInit(): void {
     this.columns.forEach(col => {
       if (col.filter) {
-        if(col.type === 'text'){
-          filterValues[col.header] = this.values[col.header] === undefined ? '' : this.values[col.header];
-        }
+        this.filters[col.name] = '';
       }
     });
-    
-    return filterValues;
+    this.filter();
+  }
+
+  getCheckboxFilterValues(): void {
+    this.columns.forEach(col => {
+      if (col.filter && col.type === 'checkbox') {
+          switch (this.filters[col.name]) {
+            case 'activeElements':
+              this.filters[col.name] = true;
+              break;
+            case 'noActiveElements':
+              this.filters[col.name] = false;
+              break;
+            case 'nofilter':
+            default:
+              this.filters[col.name] = null;
+              break;
+          }
+      }
+    });
   }
 
   filter() : void{
-    if(!this.apiCallEnable)
-      return;
-    this.apiCallEnable = false;
     this.data = [];
-    const textFilters = this.getFilterValues();
-    const mergedFilters = this.createMergedFilters(textFilters, this.checkboxFilters);
-    this.service.getDataWithFilters(mergedFilters).subscribe((response : any) =>{
-      this.data = this.service.mapDataToRows(response);
+    this.getCheckboxFilterValues();
+    this.service.getDataWithFilters(this.filters).subscribe({
+      next: (response : any) =>{
+        this.data = this.service.mapDataToRows(response);
+      },
+      error: (error: any) => {
+        console.error('Error fetching data:', error);
+      }
     });
-    setTimeout(()=>{this.apiCallEnable = true; },200)
   } 
 
-  createMergedFilters(filterValues: { [key: string]: string }, checkboxFilters: { [key: string]: string }): { [key: string]: any } {
-    const mergedFilters: { [key: string]: any } = { ...filterValues };
-
-    for (const key in checkboxFilters) {
-      if (checkboxFilters.hasOwnProperty(key)) {
-        switch (checkboxFilters[key]) {
-          case 'activeElements':
-            mergedFilters[key] = true;
-            break;
-          case 'noActiveElements':
-            mergedFilters[key] = false;
-            break;
-          case 'nofilter':
-          default:
-            mergedFilters[key] = null;
-            break;
-        }
-      }
-    }
-    return mergedFilters;
+  checkboxFilterStatusChanged(colName:string, state : string) : void{
+    this.filters[colName] = state;
+    this.filter();
   }
 
   removeElement(e : Event, id : number) : void{
@@ -81,14 +76,8 @@ export class DataGridViewComponent    {
     } 
    }
 
-  checkboxFilterChanged(colHeader:string, state : any) : void{
-    this.checkboxFilters[colHeader] = state;
-    this.filter();
-  }
-
   goToDetails(e : Event, id : number) : void{
     e.preventDefault();
-    console.log(id);
     this.router.navigate([this.dataUrl, id]);
   }
 }

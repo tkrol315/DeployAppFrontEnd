@@ -22,15 +22,17 @@ export class ProjectService implements DataGridViewDataService   {
     }));
   }
   
-  getDataWithFilters(filters: { [key: string]: any; }): Observable<any[]> {
+  getDataWithFilters(filters?: { [key: string]: any; }): Observable<any[]> {
 
     let params = new HttpParams();
+    if(filters){
     Object.keys(filters).forEach(key => {
       const value = filters[key];
-      if (value !== null && value !== undefined) {
-        params = params.append(key, value);
+      if (value !== undefined) {
+        params = params.append(key, value === null ? '' : value.toString());
       }
     });
+  }
     return this.http.get<any[]>(this.url, {params});
   }
 
@@ -52,8 +54,5 @@ export class ProjectService implements DataGridViewDataService   {
    return this.http.post<ProjectDto>(this.url,dto, httpOptions)
   }
 
-  getProjectInstances(projId : number) : Observable<any[]>{
-    return this.http.get<[]>(`${this.url}/${projId}/instances`);
-  }
   
 }

@@ -13,8 +13,8 @@
       <tr>
         <!-- Input fields for filtering -->
         <th *ngFor="let col of columns">
-          <input *ngIf="col.filter" class="form-control" name="{{col.header}}" placeholder="Filter {{ col.header }}" [(ngModel)]="values[col.header]" type="text" (input) = "filter()"/>
-          <app-checkbox-filter (filterChanged)="checkboxFilterChanged(col.header,$event)" *ngIf="col.type === 'checkbox'"></app-checkbox-filter>
+          <input *ngIf="col.filter && col.type === 'text'" class="form-control" name="{{col.header}}" placeholder="Filter {{ col.header }}" [(ngModel)]="filters[col.name]" type="text" (input) = "filter()"/>
+          <app-checkbox-filter *ngIf="col.filter && col.type === 'checkbox'" (filterChanged)="checkboxFilterStatusChanged(col.name,$event)" ></app-checkbox-filter>
           <!--app-three-state-checkbox *ngIf="col.type === 'checkbox'"></app-three-state-checkbox-->
         </th>
       </tr>
@@ -24,8 +24,8 @@
       <tr *ngFor="let row of data ">
         <td *ngFor="let col of columns">
           <ng-container *ngIf="col.visible === true" [ngSwitch]="col.type">
-            <span *ngSwitchCase="'text'">{{ row[col.columnName] }}</span>
-            <input *ngSwitchCase="'checkbox'" type="checkbox" [checked]="row[col.columnName]" class="checkbox-readonly"/>
+            <span *ngSwitchCase="'text'">{{ row[col.name] }}</span>
+            <input *ngSwitchCase="'checkbox'" type="checkbox" [checked]="row[col.name]" class="checkbox-readonly"/>
           </ng-container>
         </td>
         <td>
