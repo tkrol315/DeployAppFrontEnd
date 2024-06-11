@@ -1,27 +1,33 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { DataGridViewComponent } from '../data-grid-view/data-grid-view.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ProjectService } from '../../Services/projectService/project.service';
-import { CreateProjectPopupComponent } from '../create-project-popup/create-project-popup.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProjectRowDto } from '../../dto/project.row.dto';
+import { CreateBtnComponent } from '../create-btn/create-btn.component';
+import { CreateProjectPopupComponent } from '../popups/create-project-popup/create-project-popup.component';
 
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [DataGridViewComponent, HttpClientModule, CreateProjectPopupComponent],
+  imports: [DataGridViewComponent, HttpClientModule, CreateProjectPopupComponent, CreateBtnComponent],
   providers: [ProjectService],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.scss'
 })
-export class ProjectsComponent {
+export class ProjectsComponent implements AfterViewInit{
 
   @ViewChild(DataGridViewComponent) dataGridViewComponent!: DataGridViewComponent;
+  createProjectPopupComponent : any = CreateProjectPopupComponent;
 
   data : ProjectRowDto[]= [];
   constructor(
     protected projectService: ProjectService,
-    private modalService: NgbModal  ){}
+    private cdr : ChangeDetectorRef
+  ){}
+
+  ngAfterViewInit(): void {
+    this.cdr.detectChanges();
+  }
   
   columns : any[] = [
     {name:"Id", header:"Id", type: "text", filter: false, visible: false},
@@ -29,10 +35,5 @@ export class ProjectsComponent {
     {name:"Description", header:"Description", type: "text", filter: true, visible: true},
     {name:"IsActive", header:"IsActive", type: "checkbox", filter: true, visible: true},
   ];
-  
-  openPopup(){
-    const modalRef = this.modalService.open(CreateProjectPopupComponent);
-    modalRef.componentInstance.projectAdded.subscribe(() => this.dataGridViewComponent.filter());
-  }
 
 }

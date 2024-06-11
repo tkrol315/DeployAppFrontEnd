@@ -1,0 +1,33 @@
+<div class="container">
+    <h2 class="mb-4 mt-2">New instance</h2>
+    <form [formGroup]="this.instanceForm">
+        <div class="mb-3 form-group">
+            <label for="name" class="mb-1">Name</label>
+            <input type="text" id="name" formControlName="name" class="form-control">
+        </div>
+        <div class="mb-3 form-group">
+            <label for="typeDescription" class="mb-1">Type description</label>
+            <input type="text" id="typeDescription" formControlName="typeDescription" class="form-control">
+        </div>
+        <div class="mb-3 form-group">
+            <label for="secret" class="mb-1">Secret</label>
+            <input type="text" id="secret" formControlName="secret" class="form-control">
+        </div>
+        <div class="mb-3 form-group">
+            <label for="key" class="mb-1">Key</label>
+            <input type="text" id="key" formControlName="key" class="form-control">
+        </div>
+        <div class="mb-3 form-group">
+            <label for="versionString" class="mb-1">Version string</label>
+            <input type="text" id="versionString" formControlName="versionString" class="form-control">
+        </div>
+        <div class="mb-3 form-group">
+            <label for="versionDescription" class="mb-1">Version description</label>
+            <input type="text" id="versionDescription" formControlName="versionDescription" class="form-control">
+        </div>
+        <div class="d-flex justify-content-end mb-2">
+            <button type="button" class="btn btn-secondary me-2" (click)="closePopup()">Close</button>
+            <button [disabled]="this.instanceForm.invalid" type="submit" class="btn btn-primary" (click)="addInstance()">Add</button>
+        </div>
+    </form>
+</div>

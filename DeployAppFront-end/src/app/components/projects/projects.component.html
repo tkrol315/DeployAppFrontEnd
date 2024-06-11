@@ -1,6 +1,10 @@
-<div class="btn-project-wrapper d-flex justify-content-end">
-    <a (click)="openPopup()" class="btn btn-primary btn-project">New project</a>
-</div>
+<app-create-btn
+[text]="'New project'"
+[dataGridViewComponent]="dataGridViewComponent"
+[eventName]="'projectAdded'"
+[popupComponent] = "createProjectPopupComponent"
+>
+</app-create-btn>
 <app-data-grid-view 
 [dataUrl]="'projects'"
 [service]="projectService"

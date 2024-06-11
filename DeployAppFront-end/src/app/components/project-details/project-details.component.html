@@ -8,6 +8,13 @@
       <input type="text" id="description" formControlName="description" class="form-control w-50">
     </div>
   </form>
+  <app-create-btn
+    [text]="'New instance'"
+    [dataGridViewComponent]="dataGridViewComponent"
+    [eventName]="'instanceAdded'"
+    [popupComponent]="createInstancePopupComponent"
+  >
+  </app-create-btn>
   <app-data-grid-view
   [columns]="instanceColumns"
   [data]="instances"

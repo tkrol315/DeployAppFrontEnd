@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { DataGridViewDataService } from '../abstractions/data-grid-view-data.service';
 import { Observable } from 'rxjs';
+import { InstanceDto } from '../../dto/instance.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -29,5 +30,12 @@ export class InstanceService implements DataGridViewDataService {
   }
   removeClickedItem(instanceId: number): Observable<any> {
     return this.http.delete(`${this.url}/${this.projectId}/instances/${instanceId}`);
+  }
+
+  CreateInstance(projectId : number,dto : InstanceDto) : Observable<any>{
+    console.log(projectId);
+    console.log(`${this.url}/${this.projectId}/instances`);
+    console.log(dto);
+    return this.http.post(`${this.url}/${this.projectId}/instances`, dto);
   }
 }

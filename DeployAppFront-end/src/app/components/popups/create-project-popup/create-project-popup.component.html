@@ -1,6 +1,6 @@
 <div class="container form-wrapper">
     <h2 class="mb-4 mt-2">New Project</h2>
-    <form [formGroup]="projectForm" >
+    <form [formGroup]="this.projectForm" >
       <div class="mb-3 form-group">
         <label for="title" class="mb-1">Title
         </label>
@@ -27,7 +27,7 @@
       </div>
       <div class="d-flex justify-content-end mb-2">
         <button type="button" class="btn btn-secondary me-2" (click)="closePopup()">Close</button>
-        <button [disabled]="!projectForm.valid"  type="submit" class="btn btn-primary" (click)="addProject()">Add</button>
+        <button [disabled]="this.projectForm.invalid"  type="submit" class="btn btn-primary" (click)="addProject()">Add</button>
       </div>
     </form>
   </div>
