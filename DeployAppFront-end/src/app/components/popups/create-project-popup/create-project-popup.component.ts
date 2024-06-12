@@ -17,7 +17,7 @@ import { ProjectDto } from '../../../dto/project.dto';
 export class CreateProjectPopupComponent {
   
   projectForm : FormGroup;
-  @Output() projectAdded = new EventEmitter<ProjectDto>();
+  @Output() created = new EventEmitter<ProjectDto>();
 
   constructor(
     private activeModal : NgbActiveModal,
@@ -42,7 +42,7 @@ export class CreateProjectPopupComponent {
     if(this.projectForm.valid){
       const projectDto: ProjectDto = this.projectForm.value;
        this.projectService.createNewProject(projectDto).subscribe(project => {
-        this.projectAdded.emit(project); 
+        this.created.emit(project); 
         this.activeModal.close();
       });
     }

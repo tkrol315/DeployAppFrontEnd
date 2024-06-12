@@ -33,9 +33,6 @@ export class InstanceService implements DataGridViewDataService {
   }
 
   CreateInstance(projectId : number,dto : InstanceDto) : Observable<any>{
-    console.log(projectId);
-    console.log(`${this.url}/${this.projectId}/instances`);
-    console.log(dto);
-    return this.http.post(`${this.url}/${this.projectId}/instances`, dto);
+    return this.http.post(`${this.url}/${projectId}/instances`, dto);
   }
 }

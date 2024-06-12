@@ -41,7 +41,7 @@ export class DataGridViewComponent implements OnInit   {
             case 'noActiveElements':
               this.filters[col.name] = false;
               break;
-            case 'nofilter':
+            case 'nofilter':  
             default:
               this.filters[col.name] = null;
               break;

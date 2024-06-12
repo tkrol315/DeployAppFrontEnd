@@ -1,8 +1,6 @@
 <app-create-btn
 [text]="'New project'"
-[dataGridViewComponent]="dataGridViewComponent"
-[eventName]="'projectAdded'"
-[popupComponent] = "createProjectPopupComponent"
+(clickedBtn)="openPopup()"
 >
 </app-create-btn>
 <app-data-grid-view 

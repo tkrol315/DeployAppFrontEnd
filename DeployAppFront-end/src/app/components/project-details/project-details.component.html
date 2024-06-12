@@ -1,23 +1,32 @@
 <form [formGroup]="projectDetailsForm" class="mt-3">
     <div class="mb-3 form-group">
       <label for="title" class="mb-1">Title</label>
-      <input type="text" id="title" formControlName="title" class="form-control w-50">
+      <input [(ngModel)]="projectTitle" (blur)="onBlur()" type="text" id="title" formControlName="title" class="form-control w-50">
     </div>
     <div class="mb-5 form-group">
       <label for="description" class="mb-1">Description</label>
-      <input type="text" id="description" formControlName="description" class="form-control w-50">
+      <input [(ngModel)]="projectDescription" (blur)="onBlur()" type="text" id="description" formControlName="description" class="form-control w-50">
     </div>
   </form>
   <app-create-btn
     [text]="'New instance'"
-    [dataGridViewComponent]="dataGridViewComponent"
-    [eventName]="'instanceAdded'"
-    [popupComponent]="createInstancePopupComponent"
+    (clickedBtn)="openPopup('instance')"
   >
   </app-create-btn>
   <app-data-grid-view
   [columns]="instanceColumns"
   [data]="instances"
   [service]="instanceService"
-  [dataUrl]="dataUrl"
+  [dataUrl]="instanceUrl"
   ></app-data-grid-view>
+  <app-create-btn
+  [text]="'New deploy'"
+  (clickedBtn)="openPopup('deploy')"
+  >
+</app-create-btn>
+<app-data-grid-view
+[columns]="deployColumns"
+[data]="deploys"
+[dataUrl]="deployUrl"
+>
+</app-data-grid-view>

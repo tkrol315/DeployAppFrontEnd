@@ -5,6 +5,7 @@ import { ProjectService } from '../../Services/projectService/project.service';
 import { ProjectRowDto } from '../../dto/project.row.dto';
 import { CreateBtnComponent } from '../create-btn/create-btn.component';
 import { CreateProjectPopupComponent } from '../popups/create-project-popup/create-project-popup.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-projects',
@@ -17,12 +18,12 @@ import { CreateProjectPopupComponent } from '../popups/create-project-popup/crea
 export class ProjectsComponent implements AfterViewInit{
 
   @ViewChild(DataGridViewComponent) dataGridViewComponent!: DataGridViewComponent;
-  createProjectPopupComponent : any = CreateProjectPopupComponent;
 
   data : ProjectRowDto[]= [];
   constructor(
     protected projectService: ProjectService,
-    private cdr : ChangeDetectorRef
+    private cdr : ChangeDetectorRef,
+    private modalService : NgbModal
   ){}
 
   ngAfterViewInit(): void {
@@ -36,4 +37,8 @@ export class ProjectsComponent implements AfterViewInit{
     {name:"IsActive", header:"IsActive", type: "checkbox", filter: true, visible: true},
   ];
 
+  openPopup() : void{
+    const modalRef = this.modalService.open(CreateProjectPopupComponent);
+    modalRef.componentInstance.created.subscribe(()=> this.dataGridViewComponent.filter());
+  }
 }

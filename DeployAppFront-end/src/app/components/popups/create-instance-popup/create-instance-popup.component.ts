@@ -1,12 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { InstanceRowDto } from '../../../dto/instance.row.dto';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { InstanceDto } from '../../../dto/instance.dto';
 import { InstanceService } from '../../../Services/instanceService/instance.service';
 import { HttpClientModule } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
-import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-create-instance-popup',
@@ -18,11 +15,13 @@ import { switchMap } from 'rxjs';
 })
 export class CreateInstancePopupComponent {
   instanceForm : FormGroup
-  @Output() instanceAdded = new EventEmitter<InstanceDto>();
+  @Output() created = new EventEmitter<InstanceDto>();
+  projectId! : number; 
 
   constructor(
     private formBuilder : FormBuilder,
     private activeModal : NgbActiveModal,  
+    private instanceService : InstanceService
   ){
     this.instanceForm = formBuilder.group({
       name: new FormControl('',[Validators.required, Validators.maxLength(100)]),
@@ -37,9 +36,12 @@ export class CreateInstancePopupComponent {
 
   addInstance() : void {
     if(this.instanceForm.valid){
-      // const instanceDto : InstanceDto = this.instanceForm.value;
-      // this.route.params.pipe(switchMap((params) => this.instanceService.CreateInstance(params['id'],instanceDto)
-      //   .subscribe(()=>{this.instanceAdded.emit(); this.activeModal.close();})));
+      const instanceDto : InstanceDto = this.instanceForm.value;
+      this.instanceService.CreateInstance(this.projectId, instanceDto)
+      .subscribe( ()=>{
+          this.created.emit();
+          this.activeModal.close();
+      });
     }
   }
   closePopup() : void {

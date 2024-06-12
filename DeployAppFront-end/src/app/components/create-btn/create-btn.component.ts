@@ -1,7 +1,4 @@
-import { Component, Input, TemplateRef, model } from '@angular/core';
-import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
-import { DataGridViewComponent } from '../data-grid-view/data-grid-view.component';
-import { ActivatedRoute } from '@angular/router';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-create-btn',
@@ -13,24 +10,9 @@ import { ActivatedRoute } from '@angular/router';
 
 export class CreateBtnComponent {
   @Input() text : string = '';
-  @Input() dataGridViewComponent!: DataGridViewComponent;
-  @Input() eventName!: string;
-  @Input() popupComponent! : any;
-  
-constructor(
-  private modalService: NgbModal,
-  private route : ActivatedRoute
-) {}
+  @Output() clickedBtn =  new EventEmitter();
 
-  openPopup() : void{
-    const id  = this.route.snapshot.paramMap.get('id');
-    const modalRef = this.modalService.open(this.popupComponent);
-    modalRef.componentInstance.projectId = id;
-    if (this.eventName && modalRef.componentInstance[this.eventName]) {
-      modalRef.componentInstance[this.eventName]
-      .subscribe(() => this.dataGridViewComponent.filter());
-    } else {
-      throw new Error(`Event ${this.eventName} does not exist on the modal component`);
-    }
+  clicked() : void{
+    this.clickedBtn.emit();
   }
 }

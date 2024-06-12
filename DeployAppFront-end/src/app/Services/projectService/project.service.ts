@@ -45,14 +45,11 @@ export class ProjectService implements DataGridViewDataService   {
   }
 
   createNewProject(dto : ProjectDto) : Observable<ProjectDto>{
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }
-      )
-    }
-   return this.http.post<ProjectDto>(this.url,dto, httpOptions)
+   return this.http.post<ProjectDto>(this.url,dto);
   }
 
+  updateProject(id : number, dto : ProjectDto) : Observable<any>{
+    return this.http.put(`${this.url}/${id}`, dto);
+  }
   
 }
