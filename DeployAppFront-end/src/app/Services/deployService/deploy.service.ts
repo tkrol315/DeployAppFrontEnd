@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { DataGridViewDataService } from '../abstractions/data-grid-view-data.service';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DeployService implements DataGridViewDataService {
 
-  private url : string = "https://localhost:7183/deployapp/projects"
+  private url : string = `${environment.API_URL}/projects`
   projectId! : number;
   constructor(private http : HttpClient) { }
 

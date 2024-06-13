@@ -5,7 +5,6 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './create-deploy-popup.component.html',
-  styleUrl: './create-deploy-popup.component.scss'
 })
 export class CreateDeployPopupComponent {
 

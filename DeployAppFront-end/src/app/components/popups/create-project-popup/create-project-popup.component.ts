@@ -4,7 +4,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { CommonModule } from '@angular/common';
 import { ProjectService } from '../../../Services/projectService/project.service';
 import { HttpClientModule } from '@angular/common/http';
-import { ProjectDto } from '../../../dto/project.dto';
+import { ProjectDto } from '../../../shared/dto/project.dto';
 
 @Component({
   selector: 'app-create-project-pop-up',
@@ -12,7 +12,6 @@ import { ProjectDto } from '../../../dto/project.dto';
   imports: [ReactiveFormsModule, CommonModule, HttpClientModule],
   providers: [ProjectService],
   templateUrl: './create-project-popup.component.html',
-  styleUrl: './create-project-popup.component.scss'
 })
 export class CreateProjectPopupComponent {
   

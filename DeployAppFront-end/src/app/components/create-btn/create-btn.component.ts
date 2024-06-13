@@ -5,7 +5,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './create-btn.component.html',
-  styleUrl: './create-btn.component.scss'
 })
 
 export class CreateBtnComponent {

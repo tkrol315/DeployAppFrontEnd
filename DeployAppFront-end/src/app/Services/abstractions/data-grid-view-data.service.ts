@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { ProjectRowDto } from "../../dto/project.row.dto";
+import { ProjectRowDto } from "../../shared/dto/project.row.dto";
 
 export interface DataGridViewDataService{
     getDataWithFilters(filters: {[key:string] : any}) : Observable<any[]>;

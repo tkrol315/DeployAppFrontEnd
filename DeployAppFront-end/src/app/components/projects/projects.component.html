@@ -1,11 +1,11 @@
 <app-create-btn
-[text]="'New project'"
-(clickedBtn)="openPopup()"
+    [text]="'New project'"
+    (clickedBtn)="openPopup()"
 >
 </app-create-btn>
 <app-data-grid-view 
-[dataUrl]="'projects'"
-[service]="projectService"
-[columns]="columns"
-[data]="data">
+    [dataUrl]="'projects'"
+    [service]="projectService"
+    [columns]="columns"
+    [data]="data">
 </app-data-grid-view>

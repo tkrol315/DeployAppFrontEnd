@@ -3,6 +3,7 @@ import { DataGridViewComponent } from '../data-grid-view/data-grid-view.componen
 import { RouterModule } from '@angular/router';
 import { ProjectService } from '../../Services/projectService/project.service';
 import { HttpClientModule } from '@angular/common/http';
+import { ColumnType } from '../../shared/enums/column-type';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,18 +11,17 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [DataGridViewComponent,RouterModule, HttpClientModule],
   providers: [ProjectService],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
 constructor(private projectService: ProjectService){}
  
 
   columns = [
-    {name: "Project", header:"Project", type: "text", filter: false, visible: true},
-    {name:"ProjectVersion", header:"ProjectVersion", type: "text", filter: false, visible: true},
-    {name:"Instance", header:"Instance", type: "text", filter: false, visible: true},
-    {name:"Status", header: "Status", type:"text", filter: false, visible: true},
-    {name:"Timestamp", header: "Timestamp", type:"text", filter: false, visible: true}
+    {name: "Project", header:"Project", type: ColumnType.Text, filter: false, visible: true},
+    {name:"ProjectVersion", header:"ProjectVersion", type: ColumnType.Text, filter: false, visible: true},
+    {name:"Instance", header:"Instance", type: ColumnType.Text, filter: false, visible: true},
+    {name:"Status", header: "Status", type: ColumnType.Text, filter: false, visible: true},
+    {name:"Timestamp", header: "Timestamp", type: ColumnType.Text, filter: false, visible: true}
   ];
   data = [
     {Project: "WebDMS", ProjectVersion:"1.27.1", Instance: "System testowy vsrvweb1:83", Status: "Pending"},

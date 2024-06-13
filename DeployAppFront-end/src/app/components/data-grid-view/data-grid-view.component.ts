@@ -4,21 +4,25 @@ import { FormsModule } from '@angular/forms';
 import { CheckboxFilterComponent } from './checkbox-filter/checkbox-filter.component';
 import { Router } from '@angular/router';
 import { DataGridViewDataService } from '../../Services/abstractions/data-grid-view-data.service';
+import { DataGridViewColumnDto } from '../../shared/dto/data-grid-view-column.dto';
+import { ColumnType } from '../../shared/enums/column-type';
+import { CheckboxFilterState } from '../../shared/enums/checkbox-filter-state';
 
 @Component({
   selector: 'app-data-grid-view',
   standalone: true,
   imports: [CommonModule, FormsModule, CheckboxFilterComponent],
   templateUrl: './data-grid-view.component.html',
-  styleUrl: './data-grid-view.component.scss'
 })
 export class DataGridViewComponent implements OnInit   {
 
   @Input() data : any[] = [];
-  @Input() columns: {name:string, header: string, type: string, filter: boolean, visible : boolean}[] = [];
-  @Input() dataUrl : string = '';
+  @Input() columns: DataGridViewColumnDto[] = [];
+  @Input() dataUrl! : string;
   @Input() service! : DataGridViewDataService;
   filters : {[key : string] : any} = {};
+  //expose ColumnType to html template
+  ColumnType = ColumnType;
 
   constructor(private router : Router) {  }
 
@@ -31,17 +35,17 @@ export class DataGridViewComponent implements OnInit   {
     this.filter();
   }
 
-  getCheckboxFilterValues(): void {
+  private getCheckboxFilterValues(): void {
     this.columns.forEach(col => {
-      if (col.filter && col.type === 'checkbox') {
+      if (col.filter && col.type === ColumnType.Checkbox) {
           switch (this.filters[col.name]) {
-            case 'activeElements':
+            case CheckboxFilterState.ActiveElements:
               this.filters[col.name] = true;
               break;
-            case 'noActiveElements':
+            case CheckboxFilterState.NoActiveElements:
               this.filters[col.name] = false;
               break;
-            case 'nofilter':  
+            case CheckboxFilterState.NoFilter:  
             default:
               this.filters[col.name] = null;
               break;
@@ -63,7 +67,7 @@ export class DataGridViewComponent implements OnInit   {
     });
   } 
 
-  checkboxFilterStatusChanged(colName:string, state : string) : void{
+  checkboxFilterStatusChanged(colName:string, state : CheckboxFilterState) : void{
     this.filters[colName] = state;
     this.filter();
   }

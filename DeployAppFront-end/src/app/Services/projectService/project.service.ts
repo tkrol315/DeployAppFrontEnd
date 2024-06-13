@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { ProjectDto } from '../../dto/project.dto';
-import { Observable } from 'rxjs';
-import { ProjectRowDto } from '../../dto/project.row.dto';
+import { ProjectDto } from '../../shared/dto/project.dto';
+import { Observable, filter } from 'rxjs';
+import { ProjectRowDto } from '../../shared/dto/project.row.dto';
 import { DataGridViewDataService } from '../abstractions/data-grid-view-data.service';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectService implements DataGridViewDataService   {
-  private url : string = "https://localhost:7183/deployapp/projects"
+  private url : string = `${environment.API_URL}/projects`
   constructor(private http : HttpClient) {}
 
-  mapDataToRows(response : any) : ProjectRowDto[]{
+  mapDataToRows(response : any) : any[]{
     return response.map((item: any) => ({
       Id: item.id,
       Title: item.title,

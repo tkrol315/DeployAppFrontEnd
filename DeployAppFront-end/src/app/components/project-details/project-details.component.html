@@ -14,19 +14,19 @@
   >
   </app-create-btn>
   <app-data-grid-view
-  [columns]="instanceColumns"
-  [data]="instances"
-  [service]="instanceService"
-  [dataUrl]="instanceUrl"
+    [columns]="instanceColumns"
+    [data]="instances"
+    [service]="instanceService"
+    [dataUrl]="instanceUrl"
   ></app-data-grid-view>
   <app-create-btn
-  [text]="'New deploy'"
-  (clickedBtn)="openPopup('deploy')"
+    [text]="'New deploy'"
+    (clickedBtn)="openPopup('deploy')"
   >
 </app-create-btn>
-<app-data-grid-view
+<!-- <app-data-grid-view
 [columns]="deployColumns"
 [data]="deploys"
 [dataUrl]="deployUrl"
 >
-</app-data-grid-view>
+</app-data-grid-view> -->

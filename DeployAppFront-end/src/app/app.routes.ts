@@ -5,9 +5,9 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { ProjectDetailsComponent } from './components/project-details/project-details.component';
 
 export const routes: Routes = [
-    { path: 'dashboard', component: DashboardComponent },
-    { path: 'projects', component: ProjectsComponent },
-    { path: 'projects/:id', component: ProjectDetailsComponent },
+    { path: 'dashboard',component: DashboardComponent, title: 'Dashboard'},
+    { path: 'projects', component: ProjectsComponent, title: 'Projects'},
+    { path:'projects/:id', component:ProjectDetailsComponent, title: 'Project details'},
     { path:'', redirectTo: 'dashboard', pathMatch:'full'},
-    { path: '**', component: NotFoundComponent}
+    { path: '**', component: NotFoundComponent, title: 'Page not found'}
 ];

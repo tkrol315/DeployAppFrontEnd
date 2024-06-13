@@ -2,16 +2,16 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '
 import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
 import { ProjectService } from '../../Services/projectService/project.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { projectDetailsDto } from '../../dto/projectDetails.dto';
 import { DataGridViewComponent } from '../data-grid-view/data-grid-view.component';
 import { InstanceService } from '../../Services/instanceService/instance.service';
 import { CreateBtnComponent } from '../create-btn/create-btn.component';
 import { CreateInstancePopupComponent } from '../popups/create-instance-popup/create-instance-popup.component';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CreateDeployPopupComponent } from '../popups/create-deploy-popup/create-deploy-popup.component';
 import { DeployService } from '../../Services/deployService/deploy.service';
-import { ProjectDto } from '../../dto/project.dto';
-import { compilePipeFromMetadata } from '@angular/compiler';
+import { ProjectDto } from '../../shared/dto/project.dto';
+import { DataGridViewColumnDto } from '../../shared/dto/data-grid-view-column.dto';
+import { ColumnType } from '../../shared/enums/column-type';
 
 @Component({
   selector: 'app-project-details',
@@ -19,31 +19,30 @@ import { compilePipeFromMetadata } from '@angular/compiler';
   imports: [ReactiveFormsModule, DataGridViewComponent, CreateBtnComponent],
   providers: [ProjectService, InstanceService, DeployService],
   templateUrl: './project-details.component.html',
-  styleUrl: './project-details.component.scss'
 })
 export class ProjectDetailsComponent implements OnInit, AfterViewInit {  
 
   instanceUrl! : string;
   deployUrl! : string;  
   projectDetailsForm : FormGroup
-  projectId : number = 0;
+  projectId! : number;
   projectTitle!: string;
   projectDescription!: string;
 
-  instanceColumns : any[] = [
-    {name:"Id", header:"Id", type: "text", filter: false, visible: false},
-    {name:"Name", header:"Name", type: "text", filter: false, visible: true},
-    {name:"Type", header:"Type", type: "text", filter: false, visible: true},
-    {name:"CurrentVersion", header:"Current version", type: "text", filter: false, visible: true},]
+  instanceColumns : DataGridViewColumnDto[] = [
+    {name:"Id", header:"Id", type: ColumnType.Text, filter: false, visible: false},
+    {name:"Name", header:"Name", type: ColumnType.Text, filter: false, visible: true},
+    {name:"Type", header:"Type", type: ColumnType.Text, filter: false, visible: true},
+    {name:"CurrentVersion", header:"Current version", type: ColumnType.Text, filter: false, visible: true},]
   instances : any[] = [];
 
-  deployColumns : any[] = [
-    {name: "Id", header: "Id", type: "text", filter: false, visible:false},
-    {name: "Version", header: "Version", type: "text", filter: false, visible: true},
-    {name: "AvailableFrom", header: "Available from", type: "text", filter: false, visible:true},
-    {name: "AvailableTo", header: "Available to", type: "text", filter: false, visible:true},
-    {name: "Active", header: "Active", type: "checkbox", filter: false, visible:true},
-    {name: "Instances", header: "Instances", type: "text", filter: false, visible:true},
+  deployColumns : DataGridViewColumnDto[] = [
+    {name: "Id", header: "Id", type: ColumnType.Text, filter: false, visible:false},
+    {name: "Version", header: "Version", type: ColumnType.Text, filter: false, visible: true},
+    {name: "AvailableFrom", header: "Available from", type: ColumnType.Text, filter: false, visible:true},
+    {name: "AvailableTo", header: "Available to", type: ColumnType.Text, filter: false, visible:true},
+    {name: "Active", header: "Active", type: ColumnType.Checkbox, filter: false, visible:true},
+    {name: "Instances", header: "Instances", type: ColumnType.Text, filter: false, visible:true},
   ]
   deploys : any[] = [];
 
@@ -53,39 +52,31 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit {
   constructor(
     private formBuilder : FormBuilder,
     private projectService : ProjectService,
+    protected instanceService : InstanceService,
+    protected deployService : DeployService,
+    private modalService : NgbModal,
     private route : ActivatedRoute,
     private router : Router,
-    protected instanceService : InstanceService,
-    private cdr: ChangeDetectorRef,
-    private modalService : NgbModal,
-    protected deployService : DeployService
+    private cdr: ChangeDetectorRef
   ) {
-     this.projectDetailsForm = this.formBuilder.group({
-      title: new FormControl('', [Validators.required, Validators.maxLength(100)]),
-      description: new FormControl('', [Validators.required, Validators.maxLength(250)])
-    });
-    const projectId = this.route.snapshot.paramMap.get('id');
-    if (projectId != null) {
-      this.projectId = +projectId;
-      this.instanceUrl = `projects/${this.projectId}/instances`;
-      this.deployUrl = `projects/${this.projectId}/deploys`;
-    } 
-    else {
-      this.instanceUrl = '';
-      this.deployUrl = '';
-      this.router.navigate(["projects"]);
+
+      this.projectDetailsForm = this.formBuilder.group({
+        title: new FormControl('', [Validators.required, Validators.maxLength(100)]),
+        description: new FormControl('', [Validators.required, Validators.maxLength(250)])
+      });
     }
-  }
+    ngOnInit(): void {
+      this.route.params.subscribe(params => {
+        this.projectId = +params['id'];
+        this.instanceService.setProjectId(this.projectId);
+        this.instanceUrl = `projects/${this.projectId}/instances`;
+        this.deployUrl = `projects/${this.projectId}/deploys`;
+        this.loadProjectDetails();
+        this.instanceService.setProjectId(this.projectId);
+      })
+    }
   ngAfterViewInit(): void {
     this.cdr.detectChanges();
-  }
-  ngOnInit(): void {
-    if (this.projectId) {
-       this.loadProjectDetails();
-       this.instanceService.setProjectId(this.projectId);
-    } else {
-      this.router.navigate(["projects"]);
-    }
   }
 
   private loadProjectDetails() {

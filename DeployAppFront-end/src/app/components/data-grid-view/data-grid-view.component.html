@@ -1,38 +1,71 @@
 <table class="table table-hover ">
     <thead>
-      
       <tr>
         <!-- Headers -->
-        <th *ngFor="let col of columns">
-          <ng-container *ngIf="col.visible === true">
-          {{ col.header }}
-        </ng-container>
-        </th>
+          @for (col of columns; track col.name) {
+            @if (col.visible) {
+              <th>
+              {{col.header}}
+              </th>
+            }
+          }
         <th>Actions</th>
       </tr>
       <tr>
         <!-- Input fields for filtering -->
-        <th *ngFor="let col of columns">
-          <input *ngIf="col.filter && col.type === 'text'" class="form-control" name="{{col.header}}" placeholder="Filter {{ col.header }}" [(ngModel)]="filters[col.name]" type="text" (input) = "filter()"/>
-          <app-checkbox-filter *ngIf="col.filter && col.type === 'checkbox'" (filterChanged)="checkboxFilterStatusChanged(col.name,$event)" ></app-checkbox-filter>
-          <!--app-three-state-checkbox *ngIf="col.type === 'checkbox'"></app-three-state-checkbox-->
-        </th>
+          @for (col of columns; track col.name) {
+            @if (col.filter) {
+              <th>
+                @switch (col.type) {
+                  @case (ColumnType.Text) {
+                    <input 
+                    class="form-control" 
+                    name="{{col.header}}" 
+                    placeholder="Filter {{ col.header }}"
+                    [(ngModel)]="filters[col.name]"
+                    type="text"
+                    (input) = "filter()"/>
+                  }
+                  @case (ColumnType.Checkbox) {
+                    <app-checkbox-filter 
+                    (filterChanged)="checkboxFilterStatusChanged(col.name,$event)" >
+                  </app-checkbox-filter>
+                  }
+                }
+              </th>
+            }
+          }
+          <!--app-three-state-checkbox-->
       </tr>
     </thead>
     <tbody>
       <!-- Filtered data rows -->
-      <tr *ngFor="let row of data ">
-        <td *ngFor="let col of columns">
-          <ng-container *ngIf="col.visible === true" [ngSwitch]="col.type">
-            <span *ngSwitchCase="'text'">{{ row[col.name] }}</span>
-            <input *ngSwitchCase="'checkbox'" type="checkbox" [checked]="row[col.name]" class="checkbox-readonly"/>
-          </ng-container>
-        </td>
+       @for (row of data; track row) {
+        <tr>
+        @for (col of columns; track col.name) {
+            @if (col.visible) {
+              <td>
+              @switch (col.type) {
+                @case (ColumnType.Text) {
+                  <span>
+                    {{ row[col.name] }}
+                  </span>
+                }
+                @case (ColumnType.Checkbox) {
+                  <input 
+                  type="checkbox" 
+                  [checked]="row[col.name]" 
+                  class="checkbox-readonly"/>
+                }
+              }
+              </td>
+            }
+        }
         <td>
           <a href="#" (click)= "goToDetails($event, row['Id'])" >Edit</a> /
           <a href="#" (click) = "removeElement($event, row['Id'])">Del</a>
         </td> 
-      </tr>
+        </tr>
+       }
     </tbody>
   </table>
-  

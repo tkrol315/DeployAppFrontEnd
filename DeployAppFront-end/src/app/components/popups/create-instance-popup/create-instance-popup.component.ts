@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { InstanceDto } from '../../../dto/instance.dto';
+import { InstanceDto } from '../../../shared/dto/instance.dto';
 import { InstanceService } from '../../../Services/instanceService/instance.service';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -11,7 +11,6 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [ReactiveFormsModule, HttpClientModule],
   providers: [InstanceService],
   templateUrl: './create-instance-popup.component.html',
-  styleUrl: './create-instance-popup.component.scss'
 })
 export class CreateInstancePopupComponent {
   instanceForm : FormGroup

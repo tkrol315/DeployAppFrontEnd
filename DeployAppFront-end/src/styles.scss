@@ -1,1 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+.checkbox-readonly{
+    pointer-events: none;
+}
+.checkbox-filter-square{
+    width: 11px;
+    height: 12px;
+    background-color: #fff;
+    border: 1px black solid;
+}
+
+.form-wrapper{
+    width: 100%;
+  }
