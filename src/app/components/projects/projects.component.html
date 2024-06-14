@@ -4,8 +4,9 @@
 >
 </app-create-btn>
 <app-data-grid-view 
-    [dataUrl]="'projects'"
-    [service]="projectService"
+    (filterApplied)="applyFilters($event)"
+    (deleteConfirmed)="deleteProject($event)"
+    [detailsUrl]="'projects'"
     [columns]="columns"
-    [data]="data">
+    [data]="projects">
 </app-data-grid-view>

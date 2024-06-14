@@ -15,7 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 export class CreateInstancePopupComponent {
   instanceForm : FormGroup
   @Output() created = new EventEmitter<InstanceDto>();
-  projectId! : number; 
+  projectId! : string; 
 
   constructor(
     private formBuilder : FormBuilder,

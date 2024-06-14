@@ -1,3 +1,5 @@
+<div>
+  <span class="mx-3">Projects / {{projectTitle}} - Project details</span>
 <form [formGroup]="projectDetailsForm" class="mt-3">
     <div class="mb-3 form-group">
       <label for="title" class="mb-1">Title</label>
@@ -16,17 +18,19 @@
   <app-data-grid-view
     [columns]="instanceColumns"
     [data]="instances"
-    [service]="instanceService"
-    [dataUrl]="instanceUrl"
+    (filterApplied)="getInstances()"
+    (deleteConfirmed)="deleteInstance($event)"
   ></app-data-grid-view>
   <app-create-btn
     [text]="'New deploy'"
     (clickedBtn)="openPopup('deploy')"
   >
 </app-create-btn>
-<!-- <app-data-grid-view
+<app-data-grid-view
 [columns]="deployColumns"
 [data]="deploys"
-[dataUrl]="deployUrl"
+(filterApplied)="getDeploys()"
+(deleteConfirmed)="deleteDeploy($event)"
 >
-</app-data-grid-view> -->
+</app-data-grid-view>
+</div>

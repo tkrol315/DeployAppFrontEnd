@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { DataGridViewComponent } from '../data-grid-view/data-grid-view.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ProjectService } from '../../Services/projectService/project.service';
@@ -19,19 +19,19 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   providers: [ProjectService],
   templateUrl: './projects.component.html',
 })
-export class ProjectsComponent implements AfterViewInit{
+export class ProjectsComponent implements OnInit{
 
-  @ViewChild(DataGridViewComponent) dataGridViewComponent!: DataGridViewComponent;
 
-  data : ProjectRowDto[]= [];
+  projects : ProjectRowDto[]= [];
+  filters: { [key: string]: any } = {};
+
   constructor(
     protected projectService: ProjectService,
-    private cdr : ChangeDetectorRef,
     private modalService : NgbModal
   ){}
 
-  ngAfterViewInit(): void {
-    this.cdr.detectChanges();
+  ngOnInit(): void {
+    this.getProjects();
   }
   
   columns : DataGridViewColumnDto[] = [
@@ -41,8 +41,28 @@ export class ProjectsComponent implements AfterViewInit{
     {name:"IsActive", header:"IsActive", type: ColumnType.Checkbox, filter: true, visible: true},
   ];
 
+  private getProjects() : void{
+    this.projectService.getProjects(this.filters).subscribe({
+      next: (response: any) => {
+        this.projects = response;
+      },
+      error: (error: any) => {
+        console.error('Error fetching data:', error);
+      }
+    });
+  }
+  
+  applyFilters(filters: { [key: string]: any }): void {
+    this.filters = filters;
+    this.getProjects();
+  }
+
+  deleteProject(projectId : string) : void{
+    this.projectService.removeProjectById(projectId).subscribe(() => this.getProjects());
+  }
+
   openPopup() : void{
     const modalRef = this.modalService.open(CreateProjectPopupComponent);
-    modalRef.componentInstance.created.subscribe(()=> this.dataGridViewComponent.filter());
+    modalRef.componentInstance.created.subscribe(()=> this.getProjects());
   }
 }

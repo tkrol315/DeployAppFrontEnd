@@ -12,6 +12,7 @@ import { DeployService } from '../../Services/deployService/deploy.service';
 import { ProjectDto } from '../../shared/dto/project.dto';
 import { DataGridViewColumnDto } from '../../shared/dto/data-grid-view-column.dto';
 import { ColumnType } from '../../shared/enums/column-type';
+import { toInteger } from '@ng-bootstrap/ng-bootstrap/util/util';
 
 @Component({
   selector: 'app-project-details',
@@ -20,12 +21,10 @@ import { ColumnType } from '../../shared/enums/column-type';
   providers: [ProjectService, InstanceService, DeployService],
   templateUrl: './project-details.component.html',
 })
-export class ProjectDetailsComponent implements OnInit, AfterViewInit {  
+export class ProjectDetailsComponent implements OnInit {  
 
-  instanceUrl! : string;
-  deployUrl! : string;  
   projectDetailsForm : FormGroup
-  projectId! : number;
+  projectId! : string;
   projectTitle!: string;
   projectDescription!: string;
 
@@ -39,16 +38,16 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit {
   deployColumns : DataGridViewColumnDto[] = [
     {name: "Id", header: "Id", type: ColumnType.Text, filter: false, visible:false},
     {name: "Version", header: "Version", type: ColumnType.Text, filter: false, visible: true},
-    {name: "AvailableFrom", header: "Available from", type: ColumnType.Text, filter: false, visible:true},
-    {name: "AvailableTo", header: "Available to", type: ColumnType.Text, filter: false, visible:true},
+    {name: "AvailableFrom", header: "Available from", type: ColumnType.DateTime, filter: false, visible:true},
+    {name: "AvailableTo", header: "Available to", type: ColumnType.DateTime, filter: false, visible:true},
     {name: "Active", header: "Active", type: ColumnType.Checkbox, filter: false, visible:true},
     {name: "Instances", header: "Instances", type: ColumnType.Text, filter: false, visible:true},
   ]
   deploys : any[] = [];
 
+
   createInstancePopupComponent : any = CreateInstancePopupComponent;
-  @ViewChild(DataGridViewComponent) dataGridViewComponent!: DataGridViewComponent;
-  
+
   constructor(
     private formBuilder : FormBuilder,
     private projectService : ProjectService,
@@ -57,7 +56,6 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit {
     private modalService : NgbModal,
     private route : ActivatedRoute,
     private router : Router,
-    private cdr: ChangeDetectorRef
   ) {
 
       this.projectDetailsForm = this.formBuilder.group({
@@ -65,21 +63,54 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit {
         description: new FormControl('', [Validators.required, Validators.maxLength(250)])
       });
     }
+
     ngOnInit(): void {
-      this.route.params.subscribe(params => {
-        this.projectId = +params['id'];
-        this.instanceService.setProjectId(this.projectId);
-        this.instanceUrl = `projects/${this.projectId}/instances`;
-        this.deployUrl = `projects/${this.projectId}/deploys`;
-        this.loadProjectDetails();
-        this.instanceService.setProjectId(this.projectId);
-      })
+      this.route.paramMap.subscribe({
+        next: (paramMap) => {
+          this.projectId = String(paramMap.get('id'));
+          this.getProjectTitleAndDescription();
+          this.getInstances();
+          this.getDeploys();
+        },
+        error: (error : any)=>{
+          console.log(error);
+        }
+      });
     }
-  ngAfterViewInit(): void {
-    this.cdr.detectChanges();
+
+  getInstances(): void{
+    this.instanceService.getInstances(this.projectId).subscribe({
+      next: (response: any) => {
+        this.instances = response;
+      },
+      error: (error: any) => {
+        console.error('Error fetching instances:', error);
+        this.router.navigate(["projects"]);
+      }
+    });
   }
 
-  private loadProjectDetails() {
+  deleteInstance(instanceId : string) : void{
+    this.instanceService.removeInstanceById(this.projectId, instanceId).subscribe(() => this.getInstances());
+  }
+
+  getDeploys() : void{
+    this.deployService.getDeploys(this.projectId).subscribe({
+      next: (response : any) =>{
+        this.deploys= response;
+      },
+      error: (error: any) => {
+        console.error('Error fetching deploys:', error);
+        this.router.navigate(["projects"]);
+      }
+    })
+  }
+
+  deleteDeploy(deployId : string) : void{
+    this.deployService.removeDeployById(this.projectId, deployId).subscribe(() => this.getDeploys());
+  }
+
+  private getProjectTitleAndDescription() {
     this.projectService.getProjectById(this.projectId).subscribe({
       next: (response: any) => {
         this.projectDetailsForm.patchValue({
@@ -128,7 +159,7 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit {
     const popup = name === 'instance' ? CreateInstancePopupComponent : CreateDeployPopupComponent;
     const modalRef = this.modalService.open(popup);
     modalRef.componentInstance.projectId = this.projectId;
-    modalRef.componentInstance.created.subscribe(()=> this.dataGridViewComponent.filter());
+    //modalRef.componentInstance.created.subscribe(()=> this.dataGridViewComponent.filter());
   }
 }
 

@@ -24,7 +24,7 @@
                     placeholder="Filter {{ col.header }}"
                     [(ngModel)]="filters[col.name]"
                     type="text"
-                    (input) = "filter()"/>
+                    (input) = "applyFilter()"/>
                   }
                   @case (ColumnType.Checkbox) {
                     <app-checkbox-filter 
@@ -49,6 +49,11 @@
                 @case (ColumnType.Text) {
                   <span>
                     {{ row[col.name] }}
+                  </span>
+                }
+                @case (ColumnType.DateTime) {
+                  <span>
+                    {{ row[col.name] | date:'yyyy-MM-dd HH:mm'}}
                   </span>
                 }
                 @case (ColumnType.Checkbox) {

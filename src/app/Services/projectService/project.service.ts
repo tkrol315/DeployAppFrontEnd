@@ -1,29 +1,19 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { ProjectDto } from '../../shared/dto/project.dto';
-import { Observable, filter } from 'rxjs';
-import { ProjectRowDto } from '../../shared/dto/project.row.dto';
-import { DataGridViewDataService } from '../abstractions/data-grid-view-data.service';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { DataGridViewService } from '../abstractions/data-grid-view-service';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProjectService implements DataGridViewDataService   {
+export class ProjectService implements DataGridViewService  {
   private url : string = `${environment.API_URL}/projects`
   constructor(private http : HttpClient) {}
-
-  mapDataToRows(response : any) : any[]{
-    return response.map((item: any) => ({
-      Id: item.id,
-      Title: item.title,
-      Description: item.description,
-      IsActive: item.isActive, 
-    }));
-  }
   
-  getDataWithFilters(filters?: { [key: string]: any; }): Observable<any[]> {
+  getProjects(filters?: { [key: string]: any; }): Observable<any[]> {
 
     let params = new HttpParams();
     if(filters){
@@ -34,14 +24,21 @@ export class ProjectService implements DataGridViewDataService   {
       }
     });
   }
-    return this.http.get<any[]>(this.url, {params});
+  return this.http.get<any[]>(this.url, { params }).pipe(
+    map(response => response.map(item => ({
+      Id: item.id,
+      Title: item.title,
+      Description: item.description,
+      IsActive: item.isActive
+    })))
+  );
   }
 
-  getProjectById(id : number) : Observable<any>{
+  getProjectById(id : string) : Observable<any>{
     return this.http.get(`${this.url}/${id}`);
   }
   
-  removeClickedItem(id :number) : Observable<any>{
+  removeProjectById(id :string) : Observable<Object>{
     return this.http.delete(`${this.url}/${id}`);
   }
 
@@ -49,7 +46,7 @@ export class ProjectService implements DataGridViewDataService   {
    return this.http.post<ProjectDto>(this.url,dto);
   }
 
-  updateProject(id : number, dto : ProjectDto) : Observable<any>{
+  updateProject(id : string, dto : ProjectDto) : Observable<any>{
     return this.http.put(`${this.url}/${id}`, dto);
   }
   
